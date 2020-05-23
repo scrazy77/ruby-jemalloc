@@ -1,10 +1,11 @@
-FROM debian:jessie-slim
+FROM debian:stretch
 
 MAINTAINER Eric Chang <scrazy77@gmail.com>
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         bzip2 \
+        curl \
         ca-certificates \
         libffi-dev \
         libgdbm3 \
@@ -23,10 +24,10 @@ RUN mkdir -p /usr/local/etc \
         echo 'update: --no-document'; \
     } >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR 2.2
-ENV RUBY_VERSION 2.2.10
-ENV RUBY_DOWNLOAD_SHA256 bf77bcb7e6666ccae8d0882ea12b05f382f963f0a9a5285a328760c06a9ab650
-ENV RUBYGEMS_VERSION 2.5.2
+ENV RUBY_MAJOR 2.4
+ENV RUBY_VERSION 2.4.7
+ENV RUBY_DOWNLOAD_SHA256 a249193c7e79b891a4783f951cad8160fa5fe985c385b4628db8e9913bff1f98
+ENV RUBYGEMS_VERSION 3.0.3
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -95,7 +96,7 @@ RUN set -ex \
 # make sure bundled "rubygems" is older than RUBYGEMS_VERSION (https://github.com/docker-library/ruby/issues/246)
     && ruby -e 'exit(Gem::Version.create(ENV["RUBYGEMS_VERSION"]) > Gem::Version.create(Gem::VERSION))' \
     && gem update --system "$RUBYGEMS_VERSION" && rm -r /root/.gem/ \
-    && gem install bundler -v '~>1' \
+    && gem install bundler -v '~>1' --force \
 # rough smoke test
     && ruby --version && gem --version && bundle --version
 
