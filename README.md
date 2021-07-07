@@ -1,1 +1,1 @@
-# ruby2.4.10-jemalloc
+# ruby2.7.3-jemalloc
